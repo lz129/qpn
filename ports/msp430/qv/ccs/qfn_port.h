@@ -46,7 +46,7 @@
 /* QF-nano interrupt disabling policy for interrupt level */
 /*#define QF_ISR_NEST*/  /* nesting of ISRs not allowed */
 
-#include <intrinsics.h>  /* CCS intrinsic functions */
+#include <msp430.h>  /* CCS intrinsic functions */
 
 #include <stdint.h>      /* Exact-width types. WG14/N843 C99 Standard */
 #include <stdbool.h>     /* Boolean type.      WG14/N843 C99 Standard */

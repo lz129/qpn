@@ -130,6 +130,7 @@ CPP   := $(GNU_AVR)/bin/avr-g++
 AS    := $(GNU_AVR)/bin/avr-as
 LINK  := $(GNU_AVR)/bin/avr-gcc
 BIN   := $(GNU_AVR)/bin/avr-objcopy
+DUMP  := $(GNU_AVR)/bin/avr-objdump
 
 ##############################################################################
 # Typically, you should not need to change anything below this line
@@ -208,6 +209,8 @@ all: $(TARGET_HEX)
 
 $(TARGET_HEX): $(TARGET_ELF)
 	$(BIN) -O ihex $< $@
+	$(DUMP) -dS $<
+
 
 $(TARGET_ELF) : $(ASM_OBJS_EXT) $(C_OBJS_EXT) $(CPP_OBJS_EXT)
 	$(LINK) $(LINKFLAGS) -o $@ $^ $(LIBS)
