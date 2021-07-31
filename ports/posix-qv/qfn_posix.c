@@ -502,7 +502,8 @@ int QF_consoleGetKey(void) {
     ioctl(0, FIONREAD, &byteswaiting);
     if (byteswaiting > 0) {
         char ch;
-        read(0, &ch, 1);
+        ssize_t s = read(0, &ch, 1);
+        (void)s;
         return (int)ch;
     }
     return 0; /* no input at this time */
