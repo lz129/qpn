@@ -58,8 +58,7 @@ void Blinky_ctor(void) {
 
 /* HSM definition ----------------------------------------------------------*/
 QState Blinky_initial(Blinky * const me) {
-    QActive_armX((QActive *)me, 0U,
-                 BSP_TICKS_PER_SEC/2U, BSP_TICKS_PER_SEC/2U);
+    QActive_armX((QActive *)me, 0U, BSP_TICKS_PER_SEC/4U, BSP_TICKS_PER_SEC/4U);
     return Q_TRAN(&Blinky_off);
 }
 /*..........................................................................*/
