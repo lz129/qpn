@@ -140,14 +140,23 @@ typedef struct {
 /**
 * @param[in,out] me_ pointer to a subclass of ::QHsm (see @ref oop)
 */
+#ifndef QF_FSM_ACTIVE
 #define Q_SIG(me_)  (((QHsm *)(me_))->evt.sig)
+#else
+#define Q_SIG(me_)  (((QFsm *)(me_))->evt.sig)
+#endif
 
 #if (Q_PARAM_SIZE != 0U)
 /*! Macro to access the parameter of the current event of a state machine */
 /**
 * @param[in,out] me_ pointer to a subclass of ::QHsm (see @ref oop)
 */
+#ifndef QF_FSM_ACTIVE
 #define Q_PAR(me_)  (((QHsm *)(me_))->evt.par)
+#else
+#define Q_PAR(me_)  (((QFsm *)(me_))->evt.par)
+#endif
+
 #endif  /* (Q_PARAM_SIZE != 0U) */
 
 /****************************************************************************/
@@ -366,9 +375,13 @@ QState QHsm_top(void const * const me);
 * or and initial transition. Applicable to both HSMs and FSMs.
 * @include qepn_qtran.c
 */
+#ifndef QF_FSM_ACTIVE
 #define Q_TRAN(target_)  \
     ((Q_HSM_UPCAST(me))->temp = Q_STATE_CAST(target_), (QState)Q_RET_TRAN)
-
+#else
+#define Q_TRAN(target_)  \
+    ((Q_FSM_UPCAST(me))->temp = Q_STATE_CAST(target_), (QState)Q_RET_TRAN)
+#endif
 /*! Macro to call in a state-handler when it executes a transition
 * to history. Applicable only to HSMs.
 *
