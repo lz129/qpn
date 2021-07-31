@@ -35,7 +35,7 @@
 #include "blinky.h"
 #include "bsp.h"
 
-#include <msp430g2553.h>  /* MSP430 variant used */
+#include <msp430.h>  /* MSP430 variant used */
 /* add other drivers if necessary... */
 
 //Q_DEFINE_THIS_FILE
@@ -96,7 +96,6 @@ void QF_onStartup(void) {
 /*..........................................................................*/
 void QV_onIdle(void) { /* NOTE: called with interrutps DISABLED, see NOTE1 */
     /* toggle LED2 on and then off, see NOTE2 */
-    P1OUT |=  LED2;        /* turn LED2 on */
     P1OUT &= ~LED2;        /* turn LED2 off */
 
 #ifdef NDEBUG
@@ -108,6 +107,7 @@ void QV_onIdle(void) { /* NOTE: called with interrutps DISABLED, see NOTE1 */
 #else
     QF_INT_ENABLE(); /* just enable interrupts */
 #endif
+    P1OUT |=  LED2;        /* turn LED2 on */
 }
 /*..........................................................................*/
 Q_NORETURN Q_onAssert(char const Q_ROM * const file, int line) {
