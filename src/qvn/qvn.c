@@ -91,7 +91,11 @@ int_t QF_run(void) {
     /* trigger initial transitions in all registered active objects... */
     for (p = 1U; p <= QF_maxActive_; ++p) {
         a = QF_ROM_ACTIVE_GET_(p);
+#ifndef QF_FSM_ACTIVE
         QHSM_INIT(&a->super); /* take the initial transition in the SM */
+#else
+        QFSM_INIT(&a->super); /* take the initial transition in the SM */
+#endif        
     }
 
     QF_onStartup(); /* invoke startup callback */
@@ -132,7 +136,11 @@ int_t QF_run(void) {
             --a->tail;
             QF_INT_ENABLE();
 
+#ifndef QF_FSM_ACTIVE
             QHSM_DISPATCH(&a->super); /* dispatch to the HSM (RTC step) */
+#else
+            QFSM_DISPATCH(&a->super); /* dispatch to the FSM (RTC step) */
+#endif
 
             QF_INT_DISABLE();
             /* empty queue? */

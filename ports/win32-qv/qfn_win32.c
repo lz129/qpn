@@ -82,12 +82,21 @@ static DWORD WINAPI ticker_thread(LPVOID arg);
 /****************************************************************************/
 void QActive_ctor(QActive * const me, QStateHandler initial) {
     static QActiveVtable const vtable = { /* QActive virtual table */
+#ifndef QF_FSM_ACTIVE
         { &QHsm_init_,
           &QHsm_dispatch_ },
+#else
+        { &QFsm_init_,
+          &QFsm_dispatch_ },
+#endif
         &QActive_postX_,
         &QActive_postXISR_
     };
+#ifndef QF_FSM_ACTIVE
     QHsm_ctor(&me->super, initial);
+#else
+    QFsm_ctor(&me->super, initial);
+#endif    
     me->super.vptr = &vtable.super; /* hook the vptr to QActive vtable */
 }
 
@@ -359,7 +368,11 @@ int_t QF_run(void) {
     /* trigger initial transitions in all registered active objects... */
     for (p = 1U; p <= QF_maxActive_; ++p) {
         a = QF_ROM_ACTIVE_GET_(p);
+#ifndef QF_FSM_ACTIVE
         QHSM_INIT(&a->super); /* take the initial transition in the HSM */
+#else
+        QFSM_INIT(&a->super); /* take the initial transition in the FSM */
+#endif        
     }
 
     QF_onStartup(); /* invoke startup callback */
@@ -403,7 +416,11 @@ int_t QF_run(void) {
             --a->tail;
             QF_INT_ENABLE();
 
+#ifndef QF_FSM_ACTIVE
             QHSM_DISPATCH(&a->super); /* dispatch to the HSM (RTC step) */
+#else
+            QFSM_DISPATCH(&a->super); /* dispatch to the FSM (RTC step) */
+#endif
 
             QF_INT_DISABLE();
             /* empty queue? */

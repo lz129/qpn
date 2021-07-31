@@ -90,6 +90,16 @@ void QHsm_ctor(QHsm * const me, QStateHandler initial) {
     me->temp  = initial;
 }
 
+void QFsm_ctor(QFsm * const me, QStateHandler initial) {
+    static QFsmVtable const vtable = { /* QFsm virtual table */
+        &QFsm_init_,
+        &QFsm_dispatch_
+    };
+    me->vptr  = &vtable;
+    me->state = Q_STATE_CAST(0);
+    me->temp  = initial;
+}
+
 /****************************************************************************/
 /**
 * @description
@@ -148,6 +158,23 @@ void QHsm_init_(QHsm * const me) {
 
     me->state = t; /* change the current active state */
     me->temp  = t; /* mark the configuration as stable */
+}
+
+void QFsm_init_(QFsm * const me) {
+    /** @pre the virtual pointer must be initialized, the top-most initial
+    * transition must be initialized, and the initial transition must not
+    * be taken yet.
+    */
+    Q_REQUIRE_ID(200, (me->vptr != (QFsmVtable const *)0)
+                      && (me->temp != Q_STATE_CAST(0))
+                      && (me->state == Q_STATE_CAST(0)));
+
+                                 /* execute the top-most initial transition */
+    Q_ALLEGE((*me->temp)(me) == Q_RET_TRAN);    /* transition must be taken */
+
+    Q_SIG(me) = (QSignal)Q_ENTRY_SIG;
+    (void)(*me->temp)(me);                              /* enter the target */
+    me->state = me->temp;                    /* change the new active state */
 }
 
 /****************************************************************************/
@@ -270,6 +297,24 @@ void QHsm_dispatch_(QHsm * const me) {
 
     me->state = t; /* change the current active state */
     me->temp  = t; /* mark the configuration as stable */
+}
+
+void QFsm_dispatch_(QFsm * const me) {
+    QStateHandler t = me->state;
+
+    /** @pre the current state must be initialized and
+    * the state configuration must be stable
+    */
+    Q_REQUIRE_ID(400, (t != Q_STATE_CAST(0)) && (t == me->temp));
+
+    if ((*me->state)(me) == Q_RET_TRAN) {              /* transition taken? */
+        Q_SIG(me) = (QSignal)Q_EXIT_SIG;
+        (void)(*me->state)(me);                          /* exit the source */
+
+        Q_SIG(me) = (QSignal)Q_ENTRY_SIG;
+        (void)(*me->temp)(me);                          /* enter the target */
+        me->state = me->temp;                /* record the new active state */
+    }
 }
 
 /****************************************************************************/

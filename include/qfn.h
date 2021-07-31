@@ -118,7 +118,11 @@
 * @include qfn_qactive.c
 */
 typedef struct QActive {
+#ifndef QF_FSM_ACTIVE
     QHsm super; /**< derives from the ::QHsm base class */
+#else
+    QFsm super; /**< derives from the ::QFsm base class */
+#endif
 
 #if (QF_TIMEEVT_CTR_SIZE != 0U)
     /*! Timer for the active object */
@@ -143,7 +147,11 @@ typedef struct QActive {
 
 /*! Virtual table for the QActive class */
 typedef struct {
+#ifndef QF_FSM_ACTIVE
     QHsmVtable super; /*!< inherits QHsmVtable */
+#else
+    QFsmVtable super; /*!< inherits QFsmVtable */
+#endif
 
 #if (Q_PARAM_SIZE != 0U)
     /*! virtual function to asynchronously post (FIFO) an event to an AO

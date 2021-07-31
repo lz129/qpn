@@ -96,7 +96,11 @@ static void initialize(void) {
     /* trigger initial transitions in all registered active objects... */
     for (p = 1U; p <= QF_maxActive_; ++p) {
         a = QF_ROM_ACTIVE_GET_(p);
+#ifndef QF_FSM_ACTIVE
         QHSM_INIT(&a->super); /* take the initial transition in the SM */
+#else
+        QFSM_INIT(&a->super); /* take the initial transition in the SM */
+#endif        
     }
 
     /* process all events posted during initialization... */
@@ -338,7 +342,11 @@ void QK_activate_(void) {
 
         QF_INT_ENABLE(); /* unconditionally enable interrupts */
 
+#ifndef QF_FSM_ACTIVE
         QHSM_DISPATCH(&a->super); /* dispatch to the SM (execute RTC step) */
+#else
+        QFSM_DISPATCH(&a->super); /* dispatch to the SM (execute RTC step) */
+#endif
 
         QF_INT_DISABLE();
 
