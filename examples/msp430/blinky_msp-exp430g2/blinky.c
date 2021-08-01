@@ -75,7 +75,7 @@ QState Blinky_off(Blinky * const me) {
             break;
         }
         default: {
-            //status = Q_SUPER(&QHsm_top);
+            status = Q_HANDLED();
             break;
         }
     }
@@ -95,7 +95,7 @@ QState Blinky_on(Blinky * const me) {
             break;
         }
         default: {
-            //status = Q_SUPER(&QHsm_top);
+            status = Q_HANDLED();
             break;
         }
     }

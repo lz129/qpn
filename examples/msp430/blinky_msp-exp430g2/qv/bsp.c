@@ -45,8 +45,8 @@
 #define BSP_MCK     1000000U
 #define BSP_SMCLK   1000000U
 
-#define LED1        (1U << 0)
-#define LED2        (1U << 6)
+#define LED1        (1U << 2)
+#define LED2        (1U << 7)
 
 /* ISRs used in this project ===============================================*/
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
