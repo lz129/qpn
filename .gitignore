@@ -56,3 +56,5 @@ Release/
 lib/
 obj/
 output/
+/examples/avr_updi/blinky_412/blinky_412.X/dist/
+*.flag
